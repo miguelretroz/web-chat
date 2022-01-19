@@ -10,6 +10,8 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const nextHandler = app.getRequestHandler();
 
+const sockets = require('./sockets');
+
 app.prepare().then(() => {
   const server = express();
   const httpServer = http.createServer(server);
@@ -20,6 +22,8 @@ app.prepare().then(() => {
       methods: ['GET', 'POST'],
     },
   });
+
+  sockets.chat(io);
 
   server.use(rootControllers);
 
