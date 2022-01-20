@@ -11,6 +11,7 @@ const app = next({ dev });
 const nextHandler = app.getRequestHandler();
 
 const sockets = require('./sockets');
+const pages = require('./controllers/pages');
 
 app.prepare().then(() => {
   const server = express();
@@ -25,6 +26,8 @@ app.prepare().then(() => {
 
   sockets.chat(io);
 
+  server.get('/', pages.chat(nextHandler));
+
   server.use(rootControllers);
 
   server.all('*', (req, res) => nextHandler(req, res));
@@ -32,7 +35,3 @@ app.prepare().then(() => {
   const PORT = process.env.PORT || 3000;
   httpServer.listen(PORT, () => console.log(`listen on port ${PORT}`));
 });
-
-module.exports = {
-  nextHandler,
-};
