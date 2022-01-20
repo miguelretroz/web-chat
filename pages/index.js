@@ -1,14 +1,23 @@
 // import React, { useEffect, useState } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { newMessage, changeNickname } from '../redux/actions';
+// import { connect, useSelector, useDispatch } from 'react-redux';
+// import { newMessage, changeNickname, restoreMessages } from '../redux/actions';
+// import { v4 as uuidv4 } from 'uuid';
+// import wrapper from '../redux/store';
 
-// export default function Chat() {
+// export const getServerSideProps = wrapper.getServerSideProps((store) => ({ req }) => {
+//   const formattedMessages = req.messages
+//     .map(({ message, nickname, timestamp }) => `${timestamp} ${nickname} ${message}`);
+
+//   store.dispatch(restoreMessages(formattedMessages));
+// });
+
+// function Chat() {
 //   const dispatch = useDispatch();
 
 //   const [inputMessage, setInputMessage] = useState('');
 //   const [inputNickname, setInputNickname] = useState('');
 
-//   const socket = useSelector((state) => state.socket.socket);
+//   const socket = useSelector((state) => state.socket);
 //   const messages = useSelector((state) => state.messages);
 //   const { nickname } = useSelector((state) => state.user);
 
@@ -36,7 +45,14 @@
 //       <h1>Chat</h1>
 //       <h2>User: <span data-testid="online-user">{ nickname }</span></h2>
 
-//       <ul>{ messages && messages.map((message) => <li data-testid="message" >{ message }</li>) }</ul>
+//       <ul>{ messages && messages.map((message) => 
+//         <li
+//           data-testid="message"
+//           key={ uuidv4() }
+//         >
+//           { message }
+//         </li>)
+//       }</ul>
 
 //       <form onSubmit={ handleSubmitNickname }>
 //         <input
@@ -55,3 +71,5 @@
 //     </>
 //   );
 // }
+
+// export default connect(state => state)(Chat);
