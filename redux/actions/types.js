@@ -1,0 +1,4 @@
+module.exports = {
+  NEW_MESSAGE: 'NEW_MESSAGE',
+  CHANGE_NICKNAME: 'CHANGE_NICKNAME',
+};
