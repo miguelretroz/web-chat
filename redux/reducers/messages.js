@@ -9,6 +9,11 @@ module.exports = (state = INITIAL_STATE, action) => {
         ...state,
         action.payload,
       ];
+    case types.RESTORE_MESSAGES:
+      return [
+        ...state,
+        ...action.payload,
+      ];
     default:
       return state;
   }

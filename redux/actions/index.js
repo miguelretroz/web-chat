@@ -10,8 +10,14 @@ const changeNickname = (payload) => ({
   payload,
 });
 
+const restoreMessages = (payload) => ({
+  type: types.RESTORE_MESSAGES,
+  payload,
+});
+
 module.exports = {
   types,
   newMessage,
   changeNickname,
+  restoreMessages,
 };
