@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest --runInBand  --detectOpenHandles --forceExit",
     "test-coverage": "jest --coverage",
+    "dev": "node server.js",
     "start": "NODE_ENV=production node server.js",
     "build": "next build",
     "debug": "nodemon server.js",
