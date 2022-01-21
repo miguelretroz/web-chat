@@ -15,9 +15,15 @@ const restoreMessages = (payload) => ({
   payload,
 });
 
+const addSocketConnection = (payload) => ({
+  type: types.ADD_SOCKET_CONNECTION,
+  payload,
+});
+
 module.exports = {
   types,
   newMessage,
   changeNickname,
   restoreMessages,
+  addSocketConnection,
 };

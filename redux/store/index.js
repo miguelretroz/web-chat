@@ -1,10 +1,6 @@
 const { createStore, applyMiddleware } = require('redux');
 const { HYDRATE, createWrapper } = require('next-redux-wrapper');
 
-const socketIo = require('socket.io-client');
-
-const BASE_URL = 'http://localhost:3000';
-
 const { composeWithDevTools } = require('redux-devtools-extension');
 const thunk = require('redux-thunk').default;
 
@@ -22,8 +18,11 @@ const reducer = (state, action) => {
     const nextState = {
       ...state,
       ...action.payload,
-      socket: socketIo.connect(BASE_URL),
+      socket: state.socket,
     };
+    if (state.messages.length > 0) {
+      nextState.messages = state.messages;
+    }
     return nextState;
   }
   return rootReducer(state, action);
