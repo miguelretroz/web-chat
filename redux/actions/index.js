@@ -20,10 +20,16 @@ const addSocketConnection = (payload) => ({
   payload,
 });
 
+const updateConnectedUsers = (payload) => ({
+  type: types.UPDATE_CONNECTED_USERS,
+  payload,
+});
+
 module.exports = {
   types,
   newMessage,
   changeNickname,
   restoreMessages,
   addSocketConnection,
+  updateConnectedUsers,
 };
