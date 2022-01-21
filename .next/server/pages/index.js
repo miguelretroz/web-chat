@@ -34,9 +34,11 @@ uuid__WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? await
 
 
 const getServerSideProps = _redux_store__WEBPACK_IMPORTED_MODULE_5___default().getServerSideProps((store)=>({ req  })=>{
-        const formattedMessages = req.messages.map(({ message , nickname , timestamp  })=>`${timestamp} ${nickname} ${message}`
-        );
-        store.dispatch((0,_redux_actions__WEBPACK_IMPORTED_MODULE_3__.restoreMessages)(formattedMessages));
+        if (req.messages) {
+            const formattedMessages = req.messages.map(({ message , nickname , timestamp  })=>`${timestamp} ${nickname} ${message}`
+            );
+            store.dispatch((0,_redux_actions__WEBPACK_IMPORTED_MODULE_3__.restoreMessages)(formattedMessages));
+        }
     }
 );
 function Chat() {
@@ -47,11 +49,14 @@ function Chat() {
     );
     const messages = (0,react_redux__WEBPACK_IMPORTED_MODULE_2__.useSelector)((state)=>state.messages
     );
-    const { nickname  } = (0,react_redux__WEBPACK_IMPORTED_MODULE_2__.useSelector)((state)=>state.user
+    const { nickname: nickname1  } = (0,react_redux__WEBPACK_IMPORTED_MODULE_2__.useSelector)((state)=>state.user
+    );
+    const { connected  } = (0,react_redux__WEBPACK_IMPORTED_MODULE_2__.useSelector)(({ users  })=>users
     );
     (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
-        socket.on('message', (message)=>dispatch((0,_redux_actions__WEBPACK_IMPORTED_MODULE_3__.newMessage)(message))
-        );
+        if (socket.on) {
+            socket.emit('getConnectedUsers');
+        }
     }, [
         socket
     ]);
@@ -63,29 +68,43 @@ function Chat() {
         e.preventDefault();
         socket.emit('message', {
             chatMessage: inputMessage,
-            nickname
+            nickname: nickname1
         });
+        setInputMessage('');
     };
     const handleSubmitNickname = (e)=>{
         e.preventDefault();
+        socket.emit('setNickname', inputNickname);
         dispatch((0,_redux_actions__WEBPACK_IMPORTED_MODULE_3__.changeNickname)(inputNickname));
+        setInputNickname('');
     };
     return(/*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
         children: [
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
                 children: "Chat"
             }),
-            /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("h2", {
+            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h3", {
+                children: "Usu\xe1rios conectados"
+            }),
+            /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
                 children: [
-                    "User: ",
-                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
+                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("li", {
                         "data-testid": "online-user",
-                        children: nickname
-                    })
+                        children: nickname1
+                    }),
+                    Object.values(connected).filter(({ id  })=>socket.id !== id
+                    ).map(({ id , nickname  })=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("li", {
+                            "data-testid": "online-user",
+                            children: nickname.substring(0, 16)
+                        }, id)
+                    )
                 ]
             }),
+            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h3", {
+                children: "Mensagens"
+            }),
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("ul", {
-                children: messages && messages.map((message)=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("li", {
+                children: messages.map((message)=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("li", {
                         "data-testid": "message",
                         children: message
                     }, (0,uuid__WEBPACK_IMPORTED_MODULE_4__.v4)())
@@ -126,8 +145,7 @@ function Chat() {
         ]
     }));
 }
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_2__.connect)((state)=>state
-)(Chat));
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Chat);
 
 });
 
@@ -179,13 +197,6 @@ module.exports = require("redux-devtools-extension");
 /***/ ((module) => {
 
 module.exports = require("redux-thunk");
-
-/***/ }),
-
-/***/ 87:
-/***/ ((module) => {
-
-module.exports = require("socket.io-client");
 
 /***/ }),
 

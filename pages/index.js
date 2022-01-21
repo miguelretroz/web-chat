@@ -1,14 +1,16 @@
-// import React, { useEffect, useState } from 'react';
-// import { connect, useSelector, useDispatch } from 'react-redux';
-// import { newMessage, changeNickname, restoreMessages } from '../redux/actions';
+// import React, { useState, useEffect } from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { changeNickname, restoreMessages } from '../redux/actions';
 // import { v4 as uuidv4 } from 'uuid';
 // import wrapper from '../redux/store';
 
 // export const getServerSideProps = wrapper.getServerSideProps((store) => ({ req }) => {
-//   const formattedMessages = req.messages
+//   if (req.messages) {
+//     const formattedMessages = req.messages
 //     .map(({ message, nickname, timestamp }) => `${timestamp} ${nickname} ${message}`);
 
-//   store.dispatch(restoreMessages(formattedMessages));
+//     store.dispatch(restoreMessages(formattedMessages));
+//   }
 // });
 
 // function Chat() {
@@ -20,32 +22,48 @@
 //   const socket = useSelector((state) => state.socket);
 //   const messages = useSelector((state) => state.messages);
 //   const { nickname } = useSelector((state) => state.user);
+//   const { connected } = useSelector(({ users }) => users);
 
 //   useEffect(() => {
-//     socket.on('message', (message) => dispatch(newMessage(message)));
+//     if (socket.on) {
+//       socket.emit('getConnectedUsers');
+//     }
 //   }, [socket]);
 
 //   const handleMessage = ({ target }) => setInputMessage(target.value);
-
 //   const handleNickname = ({ target }) => setInputNickname(target.value);
-
 //   const handleSubmitMessage = (e) => {
 //     e.preventDefault();
-//     socket.emit('message', { chatMessage: inputMessage, nickname });
-//   };
 
+//     socket.emit('message', { chatMessage: inputMessage, nickname });
+
+//     setInputMessage('');
+//   };
 //   const handleSubmitNickname = (e) => {
 //     e.preventDefault();
 
+//     socket.emit('setNickname', inputNickname);
 //     dispatch(changeNickname(inputNickname));
+
+//     setInputNickname('');
 //   };
 
 //   return (
 //     <>
 //       <h1>Chat</h1>
-//       <h2>User: <span data-testid="online-user">{ nickname }</span></h2>
+//       {/* <h2>User: <span>{ nickname }</span></h2> */}
 
-//       <ul>{ messages && messages.map((message) => 
+//       <h3>Usuários conectados</h3>
+//       <ul>
+//         <li data-testid="online-user">{ nickname }</li>
+//         {
+//           Object.values(connected).filter(({ id }) => socket.id !== id)
+//           .map(({ id, nickname }) => <li data-testid="online-user" key={ id }>{ nickname.substring(0, 16) }</li>)
+//         }
+//       </ul>
+
+//       <h3>Mensagens</h3>
+//       <ul>{ messages.map((message) => 
 //         <li
 //           data-testid="message"
 //           key={ uuidv4() }
@@ -72,4 +90,4 @@
 //   );
 // }
 
-// export default connect(state => state)(Chat);
+// export default Chat;

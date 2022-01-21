@@ -51,11 +51,23 @@ const restoreMessages = (payload)=>({
         payload
     })
 ;
+const addSocketConnection = (payload)=>({
+        type: types.ADD_SOCKET_CONNECTION,
+        payload
+    })
+;
+const updateConnectedUsers = (payload)=>({
+        type: types.UPDATE_CONNECTED_USERS,
+        payload
+    })
+;
 module.exports = {
     types,
     newMessage,
     changeNickname,
-    restoreMessages
+    restoreMessages,
+    addSocketConnection,
+    updateConnectedUsers
 };
 
 
@@ -68,7 +80,9 @@ module.exports = {
 module.exports = {
     NEW_MESSAGE: 'NEW_MESSAGE',
     CHANGE_NICKNAME: 'CHANGE_NICKNAME',
-    RESTORE_MESSAGES: 'RESTORE_MESSAGES'
+    RESTORE_MESSAGES: 'RESTORE_MESSAGES',
+    ADD_SOCKET_CONNECTION: 'ADD_SOCKET_CONNECTION',
+    UPDATE_CONNECTED_USERS: 'UPDATE_CONNECTED_USERS'
 };
 
 
@@ -82,10 +96,12 @@ const { combineReducers  } = __webpack_require__(695);
 const socket = __webpack_require__(164);
 const messages = __webpack_require__(711);
 const user = __webpack_require__(560);
+const users = __webpack_require__(771);
 const rootReducer = combineReducers({
     socket,
     messages,
-    user
+    user,
+    users
 });
 module.exports = rootReducer;
 
@@ -119,12 +135,15 @@ module.exports = (state = INITIAL_STATE, action)=>{
 /***/ }),
 
 /***/ 164:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
+const { types  } = __webpack_require__(131);
 const INITIAL_STATE = {};
 module.exports = (state = INITIAL_STATE, action)=>{
     switch(action.type){
+        case types.ADD_SOCKET_CONNECTION:
+            return action.payload;
         default:
             return state;
     }
@@ -157,14 +176,35 @@ module.exports = (state = INITIAL_STATE, action)=>{
 
 /***/ }),
 
+/***/ 771:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+
+const { types  } = __webpack_require__(131);
+const INITIAL_STATE = {
+    connected: {}
+};
+module.exports = (state = INITIAL_STATE, action)=>{
+    switch(action.type){
+        case types.UPDATE_CONNECTED_USERS:
+            return {
+                ...state,
+                connected: action.payload
+            };
+        default:
+            return state;
+    }
+};
+
+
+/***/ }),
+
 /***/ 501:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
 const { createStore , applyMiddleware  } = __webpack_require__(695);
 const { HYDRATE , createWrapper  } = __webpack_require__(648);
-const socketIo = __webpack_require__(87);
-const BASE_URL = 'http://localhost:3000';
 const { composeWithDevTools  } = __webpack_require__(173);
 const thunk = (__webpack_require__(417)["default"]);
 const bindMiddleware = (middleware)=>{
@@ -177,8 +217,11 @@ const reducer = (state, action)=>{
         const nextState = {
             ...state,
             ...action.payload,
-            socket: socketIo.connect(BASE_URL)
+            socket: state.socket
         };
+        if (state.messages.length > 0) {
+            nextState.messages = state.messages;
+        }
         return nextState;
     }
     return rootReducer(state, action);
